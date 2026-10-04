@@ -1,0 +1,443 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Photo from './Photo.astro';
+import type { Dictionary } from '../i18n/de';
+import { heroVideo } from '../config';
+
+import master from '../assets/photos/master-interior.jpg';
+import masterPortrait from '../assets/photos/master-interior-portrait.jpg';
+import lifestyle from '../assets/photos/lifestyle-morning.jpg';
+import lifestylePortrait from '../assets/photos/lifestyle-morning-portrait.jpg';
+import exterior from '../assets/photos/exterior.jpg';
+import coffee from '../assets/photos/coffee-croissant.jpg';
+
+interface Props {
+  t: Dictionary;
+}
+const { t } = Astro.props;
+const links = [
+  { href: '#karte', label: t.nav.menu },
+  { href: '#raum', label: t.nav.room },
+  { href: '#besuch', label: t.nav.visit },
+];
+---
+
+<Layout t={t}>
+  <a class="skip" href="#inhalt">{t.nav.skip}</a>
+  <div class="light" aria-hidden="true"></div>
+
+  <header class="nav" data-nav>
+    <a class="wordmark" href="#top" aria-label="Café Lumière">Café <em>Lumière</em></a>
+    <nav class="nav__links" aria-label={t.nav.primary}>
+      {links.map((l) => <a href={l.href}>{l.label}</a>)}
+    </nav>
+    <div class="lang" role="group" aria-label={t.nav.language}>
+      <a href="/" lang="de" hreflang="de" aria-current={t.lang === 'de' ? 'true' : undefined} data-lang>DE</a>
+      <span aria-hidden="true">/</span>
+      <a href="/en/" lang="en" hreflang="en" aria-current={t.lang === 'en' ? 'true' : undefined} data-lang>EN</a>
+    </div>
+    <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="overlay" data-toggle>
+      <span data-toggle-label data-open={t.nav.open} data-close={t.nav.close}>{t.nav.open}</span>
+    </button>
+  </header>
+
+  <div class="overlay" id="overlay" data-overlay hidden>
+    <nav class="overlay__links" aria-label={t.nav.primary}>
+      {links.map((l) => <a href={l.href}>{l.label}</a>)}
+    </nav>
+    <div class="overlay__foot">
+      <div class="lang" role="group" aria-label={t.nav.language}>
+        <a href="/" lang="de" hreflang="de" aria-current={t.lang === 'de' ? 'true' : undefined} data-lang>Deutsch</a>
+        <span aria-hidden="true">/</span>
+        <a href="/en/" lang="en" hreflang="en" aria-current={t.lang === 'en' ? 'true' : undefined} data-lang>English</a>
+      </div>
+      <p>{t.visit.place}</p>
+    </div>
+  </div>
+
+  <main id="inhalt">
+    <!-- 1 · Hero -->
+    <section class="hero" id="top" data-section>
+      <div class="hero__frame">
+        <div class="hero__media">
+          <Photo
+            src={master}
+            mobileSrc={masterPortrait}
+            mobileMedia="(max-width: 899px)"
+            alt={t.hero.alt}
+            sizes="(min-width: 1440px) 1280px, 90vw"
+            loading="eager"
+            fetchpriority="high"
+          />
+          {
+            heroVideo && (
+              <video class="hero__video" muted playsinline preload="none" aria-hidden="true" tabindex="-1" data-hero-video data-src={heroVideo.mp4} />
+            )
+          }
+        </div>
+        <h1 class="hero__title">
+          {t.hero.headline.map((line) => <span class="line"><span>{line}</span></span>)}
+        </h1>
+      </div>
+      <div class="hero__foot">
+        <p class="label">{t.hero.label}</p>
+        <p class="hero__sub">{t.hero.sub}</p>
+      </div>
+    </section>
+
+    <!-- 2 · Statement -->
+    <section class="statement" id="cafe" data-section>
+      <p class="label reveal">{t.statement.label}</p>
+      <h2 class="display statement__heading reveal">{t.statement.heading}</h2>
+      <p class="statement__lead reveal">{t.statement.lead}</p>
+      <div class="statement__body reveal">
+        {t.statement.body.map((p) => <p>{p}</p>)}
+      </div>
+    </section>
+
+    <!-- 3 · Offering -->
+    <section class="offering" id="angebot" data-section>
+      <div class="offering__text">
+        <p class="label reveal">{t.offering.label}</p>
+        <h2 class="display reveal">
+          {t.offering.heading.map((line) => <span class="block">{line}</span>)}
+        </h2>
+        <p class="offering__intro reveal">{t.offering.intro}</p>
+        <a class="textlink reveal" href="#karte">{t.offering.link}</a>
+      </div>
+      <figure class="offering__figure">
+        <div class="arch">
+          <div data-parallax="0.05">
+            <Photo
+              src={coffee}
+              alt={t.offering.alt}
+              sizes="(min-width: 900px) 42vw, 88vw"
+              mobileSizes="88vw"
+            />
+          </div>
+        </div>
+        <div class="offering__notes reveal">
+          {
+            t.offering.notes.map((n) => (
+              <div>
+                <h3>{n.title}</h3>
+                <p>{n.text}</p>
+              </div>
+            ))
+          }
+        </div>
+      </figure>
+    </section>
+
+    <!-- 4 · Menu -->
+    <section class="menu" id="karte" data-section>
+      <div class="flutes" aria-hidden="true"></div>
+      <div class="menu__inner">
+        <div class="menu__head">
+          <p class="label reveal">{t.menu.label}</p>
+          <h2 class="display reveal">{t.menu.heading}</h2>
+          <p class="menu__intro reveal">{t.menu.intro}</p>
+          <div class="menu__tabs reveal" role="tablist" aria-label={t.menu.tablist} data-tabs>
+            {
+              t.menu.categories.map((c, i) => (
+                <button
+                  type="button"
+                  role="tab"
+                  id={`tab-${c.id}`}
+                  aria-controls={`panel-${c.id}`}
+                  aria-selected={i === 0 ? 'true' : 'false'}
+                  tabindex={i === 0 ? 0 : -1}
+                >
+                  {c.name}
+                </button>
+              ))
+            }
+          </div>
+        </div>
+        <div class="menu__panels">
+          {
+            t.menu.categories.map((c, i) => (
+              <div class="menu__panel" role="tabpanel" id={`panel-${c.id}`} aria-labelledby={`tab-${c.id}`} data-panel data-active={i === 0 ? '' : undefined}>
+                <h3 class="menu__cat">{c.name}</h3>
+                <ul>
+                  {c.items.map((item) => (
+                    <li>
+                      <span class="menu__name">{item.name}</span>
+                      <span class="menu__desc">{item.desc}</span>
+                      <span class="menu__price">{item.price}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          }
+          <p class="menu__note">{t.menu.note}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 · The room -->
+    <section class="room" id="raum" data-section>
+      <div class="room__wide" data-grow>
+        <div data-parallax="0.05">
+          <Photo
+            src={lifestyle}
+            mobileSrc={lifestylePortrait}
+            alt={t.room.lifestyleAlt}
+            sizes="100vw"
+          />
+        </div>
+      </div>
+      <div class="room__text">
+        <p class="label reveal">{t.room.label}</p>
+        <h2 class="display reveal">{t.room.heading}</h2>
+        <div class="room__copy reveal">
+          {t.room.text.map((p, i) => <p class={i === 0 ? 'lead' : undefined}>{p}</p>)}
+        </div>
+      </div>
+      <div class="flutes flutes--rise" aria-hidden="true"></div>
+    </section>
+
+    <!-- 6 · Philosophy -->
+    <section class="philosophy" id="haltung" data-section>
+      <div class="philosophy__inner">
+        <p class="label reveal">{t.philosophy.label}</p>
+        <h2 class="display philosophy__heading reveal">{t.philosophy.heading}</h2>
+        <p class="philosophy__lead reveal">{t.philosophy.lead}</p>
+        <ul class="philosophy__points">
+          {
+            t.philosophy.points.map((p) => (
+              <li class="reveal">
+                <h3>{p.title}</h3>
+                <p>{p.text}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <!-- 7 · Visit -->
+    <section class="visit" id="besuch" data-section>
+      <div class="visit__inner">
+        <p class="label reveal">{t.visit.label}</p>
+        <h2 class="display reveal">{t.visit.heading}</h2>
+        <p class="visit__lead reveal">{t.visit.text}</p>
+        <figure class="visit__figure">
+          <div data-parallax="0.03">
+            <Photo src={exterior} alt={t.visit.alt} sizes="(min-width: 1440px) 1280px, 90vw" mobileSizes="100vw" />
+          </div>
+        </figure>
+        <dl class="visit__facts reveal">
+          <div>
+            <dt>{t.visit.placeLabel}</dt>
+            <dd>{t.visit.place}</dd>
+          </div>
+          <div>
+            <dt>{t.visit.hoursLabel}</dt>
+            <dd>
+              <ul>
+                {t.visit.hours.map((h) => <li><span>{h.days}</span><span>{h.time}</span></li>)}
+              </ul>
+            </dd>
+          </div>
+        </dl>
+        <p class="visit__note reveal">{t.visit.note}</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- 8 · Footer -->
+  <footer class="footer">
+    <p class="footer__mark" aria-hidden="true">Café <em>Lumière</em></p>
+    <div class="footer__row">
+      <p>{t.footer.tagline}<br />{t.visit.place}</p>
+      <nav aria-label={t.nav.primary}>
+        {links.map((l) => <a href={l.href}>{l.label}</a>)}
+      </nav>
+      <div class="lang" role="group" aria-label={t.nav.language}>
+        <a href="/" lang="de" hreflang="de" aria-current={t.lang === 'de' ? 'true' : undefined} data-lang>DE</a>
+        <span aria-hidden="true">/</span>
+        <a href="/en/" lang="en" hreflang="en" aria-current={t.lang === 'en' ? 'true' : undefined} data-lang>EN</a>
+      </div>
+    </div>
+    <div class="footer__base">
+      <p class="footer__disclosure">{t.footer.disclosure}</p>
+      <a href="#top">{t.footer.top}</a>
+    </div>
+  </footer>
+</Layout>
+
+<script>
+  const root = document.documentElement;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const clamp = (n: number, min = 0, max = 1) => Math.min(max, Math.max(min, n));
+
+  // Hero: start the load reveal once the still has decoded.
+  const heroImg = document.querySelector<HTMLImageElement>('.hero__media img');
+  const ready = () => root.classList.add('is-ready');
+  if (heroImg && !heroImg.complete) {
+    heroImg.addEventListener('load', ready, { once: true });
+    heroImg.addEventListener('error', ready, { once: true });
+    window.setTimeout(ready, 2500);
+  } else {
+    ready();
+  }
+
+  // Reveal on first entry.
+  const reveals = document.querySelectorAll<HTMLElement>('.reveal');
+  if ('IntersectionObserver' in window && !reduced.matches) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-in');
+            io.unobserve(entry.target);
+          }
+        }
+      },
+      { rootMargin: '0px 0px -12% 0px', threshold: 0.1 },
+    );
+    reveals.forEach((el) => io.observe(el));
+  } else {
+    reveals.forEach((el) => el.classList.add('is-in'));
+  }
+
+  // Scroll-linked: navigation, drifting light, parallax, the growing image.
+  const nav = document.querySelector<HTMLElement>('[data-nav]');
+  const parallax = [...document.querySelectorAll<HTMLElement>('[data-parallax]')];
+  const grow = document.querySelector<HTMLElement>('[data-grow]');
+  let lastY = window.scrollY;
+  let ticking = false;
+
+  const update = () => {
+    ticking = false;
+    const y = window.scrollY;
+    const vh = window.innerHeight;
+
+    if (nav) {
+      const menuOpen = root.classList.contains('menu-open');
+      nav.classList.toggle('is-solid', y > 24);
+      if (!menuOpen) {
+        if (y > lastY + 4 && y > 160) nav.classList.add('is-hidden');
+        else if (y < lastY - 4 || y <= 160) nav.classList.remove('is-hidden');
+      }
+    }
+    lastY = y;
+
+    if (reduced.matches) return;
+
+    const max = document.documentElement.scrollHeight - vh;
+    root.style.setProperty('--scroll', max > 0 ? (y / max).toFixed(4) : '0');
+
+    for (const el of parallax) {
+      const r = el.parentElement!.getBoundingClientRect();
+      if (r.bottom < -200 || r.top > vh + 200) continue;
+      const mid = (r.top + r.height / 2 - vh / 2) / vh;
+      const amount = Number(el.dataset.parallax) * r.height;
+      el.style.transform = `translate3d(0, ${(-mid * amount).toFixed(1)}px, 0) scale(${1 + Number(el.dataset.parallax) * 2})`;
+    }
+
+    if (grow) {
+      const r = grow.getBoundingClientRect();
+      const p = clamp((vh - r.top) / (vh * 0.75));
+      grow.style.setProperty('--p', p.toFixed(3));
+    }
+  };
+
+  const onScroll = () => {
+    if (!ticking) {
+      ticking = true;
+      window.requestAnimationFrame(update);
+    }
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  update();
+
+  // Mobile navigation overlay.
+  const toggle = document.querySelector<HTMLButtonElement>('[data-toggle]');
+  const overlay = document.querySelector<HTMLElement>('[data-overlay]');
+  const toggleLabel = document.querySelector<HTMLElement>('[data-toggle-label]');
+  const setMenu = (open: boolean) => {
+    if (!toggle || !overlay || !toggleLabel) return;
+    toggle.setAttribute('aria-expanded', String(open));
+    toggleLabel.textContent = open ? toggleLabel.dataset.close! : toggleLabel.dataset.open!;
+    root.classList.toggle('menu-open', open);
+    if (open) {
+      nav?.classList.remove('is-hidden');
+      overlay.hidden = false;
+      void overlay.offsetWidth;
+      overlay.classList.add('is-open');
+    } else {
+      overlay.classList.remove('is-open');
+      window.setTimeout(() => {
+        if (!root.classList.contains('menu-open')) overlay.hidden = true;
+      }, 350);
+    }
+  };
+  toggle?.addEventListener('click', () => setMenu(toggle.getAttribute('aria-expanded') !== 'true'));
+  overlay?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setMenu(false)));
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && root.classList.contains('menu-open')) {
+      setMenu(false);
+      toggle?.focus();
+    }
+  });
+  window.matchMedia('(min-width: 900px)').addEventListener('change', (e) => e.matches && setMenu(false));
+
+  // Menu tabs.
+  const tablist = document.querySelector<HTMLElement>('[data-tabs]');
+  if (tablist) {
+    const tabs = [...tablist.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+    const panels = [...document.querySelectorAll<HTMLElement>('[data-panel]')];
+    const select = (tab: HTMLButtonElement, focus = false) => {
+      tabs.forEach((t) => {
+        const on = t === tab;
+        t.setAttribute('aria-selected', String(on));
+        t.tabIndex = on ? 0 : -1;
+      });
+      panels.forEach((p) => p.toggleAttribute('data-active', p.id === tab.getAttribute('aria-controls')));
+      if (focus) tab.focus();
+    };
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => select(tab));
+      tab.addEventListener('keydown', (e) => {
+        const dir = ['ArrowRight', 'ArrowDown'].includes(e.key) ? 1 : ['ArrowLeft', 'ArrowUp'].includes(e.key) ? -1 : 0;
+        if (!dir) return;
+        e.preventDefault();
+        select(tabs[(i + dir + tabs.length) % tabs.length], true);
+      });
+    });
+  }
+
+  // Language switch keeps the reader in the same section.
+  const sections = [...document.querySelectorAll<HTMLElement>('[data-section]')];
+  document.querySelectorAll<HTMLAnchorElement>('[data-lang]').forEach((a) => {
+    a.addEventListener('click', () => {
+      const line = window.innerHeight * 0.4;
+      const current = sections.filter((s) => s.getBoundingClientRect().top <= line).pop();
+      if (current && current.id !== 'top') a.hash = current.id;
+    });
+  });
+
+  // Optional hero video: desktop only, never for reduced motion or data saver.
+  const video = document.querySelector<HTMLVideoElement>('[data-hero-video]');
+  const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
+  if (video && !reduced.matches && !saveData && window.matchMedia('(min-width: 900px)').matches) {
+    const start = () => {
+      video.src = video.dataset.src!;
+      video.addEventListener(
+        'canplaythrough',
+        () => {
+          video.classList.add('is-playing');
+          video.play().catch(() => video.classList.remove('is-playing'));
+        },
+        { once: true },
+      );
+      video.addEventListener('error', () => video.classList.remove('is-playing'));
+      video.load();
+    };
+    window.setTimeout(start, 1400);
+  }
+</script>

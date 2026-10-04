@@ -1,0 +1,68 @@
+---
+// Responsive photograph with AVIF/WebP sources and an optional
+// art-directed crop for narrow screens.
+import { getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  src: ImageMetadata;
+  mobileSrc?: ImageMetadata;
+  mobileMedia?: string;
+  alt: string;
+  sizes: string;
+  mobileSizes?: string;
+  loading?: 'lazy' | 'eager';
+  fetchpriority?: 'high' | 'auto';
+  class?: string;
+}
+
+const {
+  src,
+  mobileSrc,
+  mobileMedia = '(max-width: 719px)',
+  alt,
+  sizes,
+  mobileSizes = '100vw',
+  loading = 'lazy',
+  fetchpriority = 'auto',
+  class: className,
+} = Astro.props;
+
+const ladder = [480, 720, 960, 1280, 1680, 2240, 2880];
+const widthsFor = (img: ImageMetadata) => {
+  const w = ladder.filter((n) => n < img.width);
+  return w.length ? w : [img.width];
+};
+
+const srcset = async (img: ImageMetadata, format: 'avif' | 'webp' | 'jpeg') =>
+  (await getImage({ src: img, widths: widthsFor(img), format, quality: format === 'avif' ? 60 : 78 })).srcSet
+    .attribute;
+
+const fallback = await getImage({ src, width: Math.min(1680, src.width), format: 'jpeg', quality: 80 });
+const desktop = { avif: await srcset(src, 'avif'), webp: await srcset(src, 'webp') };
+const mobile = mobileSrc
+  ? { avif: await srcset(mobileSrc, 'avif'), webp: await srcset(mobileSrc, 'webp') }
+  : null;
+---
+
+<picture class={className}>
+  {
+    mobile && (
+      <>
+        <source media={mobileMedia} type="image/avif" srcset={mobile.avif} sizes={mobileSizes} />
+        <source media={mobileMedia} type="image/webp" srcset={mobile.webp} sizes={mobileSizes} />
+      </>
+    )
+  }
+  <source type="image/avif" srcset={desktop.avif} sizes={sizes} />
+  <source type="image/webp" srcset={desktop.webp} sizes={sizes} />
+  <img
+    src={fallback.src}
+    alt={alt}
+    width={src.width}
+    height={src.height}
+    loading={loading}
+    decoding={loading === 'eager' ? 'sync' : 'async'}
+    fetchpriority={fetchpriority}
+  />
+</picture>
