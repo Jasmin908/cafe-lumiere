@@ -135,5 +135,6 @@ export const en: Dictionary = {
       'A concept project by Forma Studio. Café Lumière is a fictional brand created as a design and development project.',
     tagline: 'Specialty coffee · Pâtisserie · Brunch',
     top: 'Back to top',
+    newTab: '(opens in a new tab)',
   },
 };

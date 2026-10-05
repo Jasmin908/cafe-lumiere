@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import Photo from './Photo.astro';
 import type { Dictionary } from '../i18n/de';
-import { heroVideo } from '../config';
+import { heroVideo, formaStudio } from '../config';
 
 import master from '../assets/photos/master-interior.jpg';
 import masterPortrait from '../assets/photos/master-interior-portrait.jpg';
@@ -262,7 +262,18 @@ const links = [
       </div>
     </div>
     <div class="footer__base">
-      <p class="footer__disclosure">{t.footer.disclosure}</p>
+      <div class="footer__about">
+        <p class="footer__disclosure">{t.footer.disclosure}</p>
+        <a
+          class="footer__credit"
+          href={formaStudio.url}
+          target="_blank"
+          rel="noopener"
+          aria-label={`${formaStudio.name} ${t.footer.newTab}`}
+        >
+          {formaStudio.name} <span aria-hidden="true">↗</span>
+        </a>
+      </div>
       <a href="#top">{t.footer.top}</a>
     </div>
   </footer>

@@ -135,6 +135,7 @@ export const de = {
       'Konzeptprojekt von Forma Studio. Café Lumière ist eine fiktive Marke und dient als Design- und Entwicklungsprojekt.',
     tagline: 'Spezialitätenkaffee · Pâtisserie · Brunch',
     top: 'Nach oben',
+    newTab: '(öffnet in neuem Tab)',
   },
 };
 
